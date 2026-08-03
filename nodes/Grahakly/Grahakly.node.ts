@@ -1,6 +1,42 @@
-import { INodeType, INodeTypeDescription } from 'n8n-workflow';
+import {
+	ILoadOptionsFunctions,
+	INodePropertyOptions,
+	INodeType,
+	INodeTypeDescription,
+} from 'n8n-workflow';
 
 export class Grahakly implements INodeType {
+	methods = {
+		loadOptions: {
+			// The tenant's WhatsApp business numbers, for the "From Number" dropdown.
+			async getPhoneNumbers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const rows = (await this.helpers.httpRequestWithAuthentication.call(this, 'grahaklyApi', {
+					method: 'GET',
+					url: '={{$credentials.baseUrl}}/api/v1/phone-numbers',
+					json: true,
+				})) as Array<{ id: string; displayPhoneNumber: string; verifiedName?: string }>;
+				return rows.map((r) => ({
+					name: `${r.verifiedName || r.displayPhoneNumber} (${r.displayPhoneNumber})`,
+					value: r.id,
+				}));
+			},
+
+			// Approved templates, for the "Template" dropdown. The list endpoint is paged: { items: [] }.
+			async getTemplates(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const res = (await this.helpers.httpRequestWithAuthentication.call(this, 'grahaklyApi', {
+					method: 'GET',
+					url: '={{$credentials.baseUrl}}/api/v1/templates',
+					qs: { status: 'APPROVED', limit: 100 },
+					json: true,
+				})) as { items?: Array<{ name: string; language: string }> };
+				return (res.items ?? []).map((t) => ({
+					name: `${t.name} (${t.language})`,
+					value: t.name,
+				}));
+			},
+		},
+	};
+
 	description: INodeTypeDescription = {
 		displayName: 'Grahakly',
 		name: 'grahakly',
@@ -84,26 +120,9 @@ export class Grahakly implements INodeType {
 				required: true,
 				default: '',
 				description:
-					'The WhatsApp business number to send from. Choose from the list, or specify an ID using an expression.',
+					'The WhatsApp business number to send from. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 				displayOptions: { show: { resource: ['message'] } },
-				typeOptions: {
-					loadOptions: {
-						routing: {
-							request: { method: 'GET', url: '/api/v1/phone-numbers' },
-							output: {
-								postReceive: [
-									{
-										type: 'setKeyValue',
-										properties: {
-											name: '={{$responseItem.verifiedName || $responseItem.displayPhoneNumber}} ({{$responseItem.displayPhoneNumber}})',
-											value: '={{$responseItem.id}}',
-										},
-									},
-								],
-							},
-						},
-					},
-				},
+				typeOptions: { loadOptionsMethod: 'getPhoneNumbers' },
 				routing: { send: { type: 'body', property: 'phoneNumberId' } },
 			},
 
@@ -161,31 +180,9 @@ export class Grahakly implements INodeType {
 				required: true,
 				default: '',
 				description:
-					'An approved template in this account. Choose from the list, or specify an ID using an expression.',
+					'An approved template in this account. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 				displayOptions: { show: { resource: ['message'], operation: ['sendTemplate'] } },
-				typeOptions: {
-					loadOptions: {
-						routing: {
-							request: {
-								method: 'GET',
-								url: '/api/v1/templates',
-								qs: { status: 'APPROVED', limit: 100 },
-							},
-							output: {
-								postReceive: [
-									{ type: 'rootProperty', properties: { property: 'items' } },
-									{
-										type: 'setKeyValue',
-										properties: {
-											name: '={{$responseItem.name}} ({{$responseItem.language}})',
-											value: '={{$responseItem.name}}',
-										},
-									},
-								],
-							},
-						},
-					},
-				},
+				typeOptions: { loadOptionsMethod: 'getTemplates' },
 				routing: { send: { type: 'body', property: 'template.name' } },
 			},
 			{
