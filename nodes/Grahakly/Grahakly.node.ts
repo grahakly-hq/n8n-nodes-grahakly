@@ -33,9 +33,11 @@ export class Grahakly implements INodeType {
 					qs: { status: 'APPROVED', limit: 100 },
 					json: true,
 				})) as { items?: Array<{ name: string; language: string }> };
+				// The value carries both name and language ("name::language"): a template name can exist
+				// in several languages, and the send needs both. They are split apart in routing below.
 				return (res.items ?? []).map((t) => ({
 					name: `${t.name} (${t.language})`,
-					value: t.name,
+					value: `${t.name}::${t.language}`,
 				}));
 			},
 		},
@@ -187,17 +189,29 @@ export class Grahakly implements INodeType {
 					'An approved template in this account. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 				displayOptions: { show: { resource: ['message'], operation: ['sendTemplate'] } },
 				typeOptions: { loadOptionsMethod: 'getTemplates' },
-				routing: { send: { type: 'body', property: 'template.name' } },
+				// The selection is "name::language"; send only the name part.
+				routing: {
+					send: {
+						type: 'body',
+						property: 'template.name',
+						value: '={{ ($parameter.templateName || "::").split("::")[0] }}',
+					},
+				},
 			},
 			{
+				// Language comes from the same picker, so there is no separate field to keep in sync.
 				displayName: 'Template Language',
 				name: 'templateLanguage',
-				type: 'string',
-				required: true,
-				default: 'en',
-				description: 'The template language code, e.g. en, en_US, hi',
+				type: 'hidden',
+				default: '',
 				displayOptions: { show: { resource: ['message'], operation: ['sendTemplate'] } },
-				routing: { send: { type: 'body', property: 'template.language' } },
+				routing: {
+					send: {
+						type: 'body',
+						property: 'template.language',
+						value: '={{ ($parameter.templateName || "::").split("::")[1] }}',
+					},
+				},
 			},
 			{
 				displayName: 'Components JSON',
