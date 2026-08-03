@@ -76,6 +76,37 @@ export class Grahakly implements INodeType {
 				default: 'create',
 			},
 
+			// ---- Shared: which business number to send FROM (required by the API) ----
+			{
+				displayName: 'From Number Name or ID',
+				name: 'phoneNumberId',
+				type: 'options',
+				required: true,
+				default: '',
+				description:
+					'The WhatsApp business number to send from. Choose from the list, or specify an ID using an expression.',
+				displayOptions: { show: { resource: ['message'] } },
+				typeOptions: {
+					loadOptions: {
+						routing: {
+							request: { method: 'GET', url: '/api/v1/phone-numbers' },
+							output: {
+								postReceive: [
+									{
+										type: 'setKeyValue',
+										properties: {
+											name: '={{$responseItem.verifiedName || $responseItem.displayPhoneNumber}} ({{$responseItem.displayPhoneNumber}})',
+											value: '={{$responseItem.id}}',
+										},
+									},
+								],
+							},
+						},
+					},
+				},
+				routing: { send: { type: 'body', property: 'phoneNumberId' } },
+			},
+
 			// ---- Shared: recipient (both message operations) ----
 			{
 				displayName: 'To (Phone Number)',
@@ -124,13 +155,37 @@ export class Grahakly implements INodeType {
 				routing: { send: { type: 'body', property: 'type' } },
 			},
 			{
-				displayName: 'Template Name',
+				displayName: 'Template Name or ID',
 				name: 'templateName',
-				type: 'string',
+				type: 'options',
 				required: true,
 				default: '',
-				description: 'The exact name of an approved template in this account',
+				description:
+					'An approved template in this account. Choose from the list, or specify an ID using an expression.',
 				displayOptions: { show: { resource: ['message'], operation: ['sendTemplate'] } },
+				typeOptions: {
+					loadOptions: {
+						routing: {
+							request: {
+								method: 'GET',
+								url: '/api/v1/templates',
+								qs: { status: 'APPROVED', limit: 100 },
+							},
+							output: {
+								postReceive: [
+									{ type: 'rootProperty', properties: { property: 'items' } },
+									{
+										type: 'setKeyValue',
+										properties: {
+											name: '={{$responseItem.name}} ({{$responseItem.language}})',
+											value: '={{$responseItem.name}}',
+										},
+									},
+								],
+							},
+						},
+					},
+				},
 				routing: { send: { type: 'body', property: 'template.name' } },
 			},
 			{
