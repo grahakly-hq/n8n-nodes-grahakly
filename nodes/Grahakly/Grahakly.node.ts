@@ -10,9 +10,12 @@ export class Grahakly implements INodeType {
 		loadOptions: {
 			// The tenant's WhatsApp business numbers, for the "From Number" dropdown.
 			async getPhoneNumbers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				// The base URL has to be read from the credential and built into a real string here:
+				// a raw helpers.httpRequest does NOT resolve ={{$credentials...}} expressions.
+				const { baseUrl } = await this.getCredentials('grahaklyApi');
 				const rows = (await this.helpers.httpRequestWithAuthentication.call(this, 'grahaklyApi', {
 					method: 'GET',
-					url: '={{$credentials.baseUrl}}/api/v1/phone-numbers',
+					url: `${baseUrl}/api/v1/phone-numbers`,
 					json: true,
 				})) as Array<{ id: string; displayPhoneNumber: string; verifiedName?: string }>;
 				return rows.map((r) => ({
@@ -23,9 +26,10 @@ export class Grahakly implements INodeType {
 
 			// Approved templates, for the "Template" dropdown. The list endpoint is paged: { items: [] }.
 			async getTemplates(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const { baseUrl } = await this.getCredentials('grahaklyApi');
 				const res = (await this.helpers.httpRequestWithAuthentication.call(this, 'grahaklyApi', {
 					method: 'GET',
-					url: '={{$credentials.baseUrl}}/api/v1/templates',
+					url: `${baseUrl}/api/v1/templates`,
 					qs: { status: 'APPROVED', limit: 100 },
 					json: true,
 				})) as { items?: Array<{ name: string; language: string }> };
