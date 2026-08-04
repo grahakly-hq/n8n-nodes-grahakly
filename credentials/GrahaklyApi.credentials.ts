@@ -1,5 +1,6 @@
 import {
 	IAuthenticateGeneric,
+	Icon,
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
@@ -11,6 +12,11 @@ export class GrahaklyApi implements ICredentialType {
 	displayName = 'Grahakly API';
 
 	documentationUrl = 'https://grahakly.com';
+
+	icon: Icon = {
+		light: 'file:../icons/grahakly.svg',
+		dark: 'file:../icons/grahakly.dark.svg',
+	};
 
 	properties: INodeProperties[] = [
 		{

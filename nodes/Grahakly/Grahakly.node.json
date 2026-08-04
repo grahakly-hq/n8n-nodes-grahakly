@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-base.grahakly",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Communication"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://grahakly.com"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/anandasiwal/n8n-nodes-grahakly"
+			}
+		]
+	}
+}

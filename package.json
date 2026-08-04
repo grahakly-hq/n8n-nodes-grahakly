@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-grahakly",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "n8n community node for Grahakly — send WhatsApp messages and templates and create contacts through the Grahakly API.",
   "keywords": [
     "n8n-community-node-package",
@@ -21,23 +21,23 @@
     "url": "git+https://github.com/anandasiwal/n8n-nodes-grahakly.git"
   },
   "engines": {
-    "node": ">=18.10"
+    "node": ">=20.15"
   },
-  "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
-    "prepare": "npm run build",
-    "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "npm run build && eslint -c .eslintrc.prepublish.js nodes credentials package.json"
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease"
   },
   "files": [
     "dist"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
+    "strict": true,
     "credentials": [
       "dist/credentials/GrahaklyApi.credentials.js"
     ],
@@ -46,13 +46,11 @@
     ]
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.3",
-    "gulp": "^5.0.0",
-    "n8n-workflow": "*",
-    "prettier": "^3.3.2",
-    "typescript": "^5.5.3"
+    "@n8n/node-cli": "*",
+    "eslint": "9.39.4",
+    "prettier": "3.8.3",
+    "release-it": "20.2.0",
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "n8n-workflow": "*"

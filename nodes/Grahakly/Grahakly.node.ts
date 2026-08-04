@@ -3,6 +3,7 @@ import {
 	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
+	NodeConnectionTypes,
 } from 'n8n-workflow';
 
 export class Grahakly implements INodeType {
@@ -46,14 +47,18 @@ export class Grahakly implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Grahakly',
 		name: 'grahakly',
-		icon: 'file:grahakly.svg',
+		icon: {
+			light: 'file:../../icons/grahakly.svg',
+			dark: 'file:../../icons/grahakly.dark.svg',
+		},
 		group: ['output'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Send WhatsApp messages and templates and create contacts through Grahakly',
 		defaults: { name: 'Grahakly' },
-		inputs: ['main'],
-		outputs: ['main'],
+		usableAsTool: true,
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'grahaklyApi', required: true }],
 		requestDefaults: {
 			baseURL: '={{$credentials.baseUrl}}',
