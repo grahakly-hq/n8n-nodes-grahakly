@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-grahakly",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "n8n community node for Grahakly — send WhatsApp messages and templates and create contacts through the Grahakly API.",
   "keywords": [
     "n8n-community-node-package",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Grahakly-hq/n8n-nodes-grahakly.git"
+    "url": "git+https://github.com/grahakly-hq/n8n-nodes-grahakly.git"
   },
   "engines": {
     "node": ">=20.15"
