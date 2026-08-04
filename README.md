@@ -40,7 +40,7 @@ The key is shown only once — copy it when you create it.
 
 ## Compatibility
 
-Built against the n8n community node API v1. Requires n8n 1.x and Node.js 18.10+.
+Built against the n8n community node API v1. Requires n8n 1.x and Node.js 20.15 or later.
 
 ## Roadmap
 
