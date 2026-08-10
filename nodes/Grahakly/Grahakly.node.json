@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-grahakly",
+	"node": "n8n-nodes-grahakly.grahakly",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Communication"],
