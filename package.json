@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-grahakly",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "n8n community node for Grahakly — send WhatsApp messages and templates and create contacts through the Grahakly API.",
   "keywords": [
     "n8n-community-node-package",
