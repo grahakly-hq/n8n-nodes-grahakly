@@ -38,10 +38,27 @@ The key is shown only once — copy it when you create it.
 - **Create** — create a contact from a phone number (E.164), with optional name, email and your own
   external ID.
 
-## Example
+## Examples
 
-Send an approved template `order_update` (English) to a customer, filling one body variable
-with their name.
+Each example is a single Grahakly node you can drop into a workflow and execute. Every operation
+returns the Grahakly API response, including the message or contact ID.
+
+### Send a text message
+
+Reply to a customer inside the 24-hour service window (i.e. after they have messaged you).
+
+1. Add the **Grahakly** node and select **Message → Send Text**.
+2. **From Number** — pick your WhatsApp business number from the list.
+3. **To (Phone Number)** — the recipient in E.164, e.g. `+919876543210`.
+4. **Message Text** — the body, e.g. `Thanks for reaching out — your order is on its way!`
+
+The customer receives the text. Outside the 24-hour window WhatsApp rejects free-form text, so use
+**Send Template** instead.
+
+### Send a template message
+
+Open a new conversation with an approved template `order_update` (English), filling one body
+variable with the customer's name.
 
 1. Add the **Grahakly** node and select **Message → Send Template**.
 2. **From Number** — pick your WhatsApp business number from the list.
@@ -65,7 +82,17 @@ with their name.
    for a template with no variables. The structure matches the WhatsApp Cloud API `components`
    array, so header, button and other component types are supported the same way.
 
-Executing the node returns the Grahakly API response, including the message ID.
+### Create a contact
+
+Add a customer to Grahakly, e.g. before messaging them or to keep it in sync with your own system.
+
+1. Add the **Grahakly** node and select **Contact → Create**.
+2. **Phone Number** — the contact in E.164, e.g. `+919876543210`.
+3. **Additional Fields** — click **Add Field** to include any of: **First Name** `Anand`,
+   **Last Name** `Asiwal`, **Email** `anand@example.com`, **External ID** `crm-4821` (your own
+   identifier, for keeping systems in sync).
+
+The contact is created (or matched by phone number) and returned in the node output.
 
 ## Compatibility
 
