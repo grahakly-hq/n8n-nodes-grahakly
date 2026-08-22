@@ -38,6 +38,35 @@ The key is shown only once — copy it when you create it.
 - **Create** — create a contact from a phone number (E.164), with optional name, email and your own
   external ID.
 
+## Example
+
+Send an approved template `order_update` (English) to a customer, filling one body variable
+with their name.
+
+1. Add the **Grahakly** node and select **Message → Send Template**.
+2. **From Number** — pick your WhatsApp business number from the list.
+3. **To (Phone Number)** — the recipient in E.164, e.g. `+919876543210`.
+4. **Template** — pick `order_update (en)` from the list.
+5. **Components JSON** — paste the parameters for the template's variables. For a template whose
+   body is `Hi {{1}}, your order has shipped.`, one text variable, this is:
+
+   ```json
+   [
+     {
+       "type": "body",
+       "parameters": [
+         { "type": "text", "text": "Anand" }
+       ]
+     }
+   ]
+   ```
+
+   The delivered message reads: *Hi Anand, your order has shipped.* Leave **Components JSON** empty
+   for a template with no variables. The structure matches the WhatsApp Cloud API `components`
+   array, so header, button and other component types are supported the same way.
+
+Executing the node returns the Grahakly API response, including the message ID.
+
 ## Compatibility
 
 Built against the n8n community node API v1. Requires n8n 1.x and Node.js 20.15 or later.
